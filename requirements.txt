@@ -1,0 +1,15 @@
+fastapi
+fastapi-mail
+uvicorn
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-multipart
+fastapi-mail
+fastapi-limiter
+cloudinary
+redis
+pydantic-settings
+python-jose
+python-dotenv
+email-validator
