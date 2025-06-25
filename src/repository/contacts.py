@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from ..database.models import Contact
 from ..schemas.contacts import ContactCreate, ContactUpdate
 from datetime import datetime, timedelta
+from src.database.models import User
 
 def get_contacts(db: Session, user_id: int):
     return db.query(Contact).filter(Contact.user_id == user_id).all()
@@ -47,3 +48,9 @@ def get_upcoming_birthdays(db: Session, user_id: int):
         Contact.user_id == user_id,
         Contact.birthday.between(today, next_week)
     ).all()
+
+def confirm_email(email: str, db: Session) -> None:
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        user.is_verified = True
+        db.commit()

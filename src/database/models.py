@@ -10,7 +10,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_verified = Column(Boolean, default=False)
     avatar_url = Column(String, nullable=True)
-
+    confirmed = Column(Boolean, default=False)  
     contacts = relationship("Contact", back_populates="owner")
 
 class Contact(Base):

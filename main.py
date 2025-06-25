@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.settings.config import engine, Base
+from src.settings.config import engine
 from src.database import models  
 from src.auth.routes import router as auth_router
 from src.routers.contacts import router as contacts_router
@@ -9,8 +9,12 @@ import redis.asyncio as redis
 from src.routers.users import router as users_router
 
 
+models.Base.metadata.create_all(bind=engine, checkfirst=True)
+
 app = FastAPI(title="Contacts API HW10")
-app.include_router(users_router)
+app.include_router(auth_router)
+app.include_router(users_router, prefix="/users", tags=["users"])
+app.include_router(contacts_router, prefix="/contacts", tags=["contacts"])
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -23,8 +27,6 @@ app.add_middleware(
 )
 
 
-app.include_router(auth_router)
-app.include_router(contacts_router)
 
 @app.on_event("startup")
 async def startup():
