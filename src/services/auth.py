@@ -6,7 +6,8 @@ from src.settings.config import SECRET_KEY, ALGORITHM
 def verify_email_token(token: str) -> str | None:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload.get("sub") 
+        return payload.get("sub")
+    except JWTError:
         return None
 
 
@@ -27,9 +28,9 @@ def get_email_from_token(token: str) -> str:
         )
 
 
-def decode_jwt_token(token: str) -> dict | None:
+def decode_jwt_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
-        return None
+        return {}
