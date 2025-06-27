@@ -73,3 +73,9 @@ uvicorn main:app --reload
 
 `/me` обмежено по Rate Limit
 
+## Підсумок роботи
+
+![Контакти](./img/contacts.png)
+
+![Користувачі](./img/users.png)
+
