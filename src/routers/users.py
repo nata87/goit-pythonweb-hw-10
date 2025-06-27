@@ -11,20 +11,20 @@ from src.schemas.user import UserResponse
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-# Cloudinary config
+
 cloudinary.config(
     cloud_name=settings.CLOUDINARY_NAME,
     api_key=settings.CLOUDINARY_API_KEY,
     api_secret=settings.CLOUDINARY_API_SECRET
 )
 
-# GET /me with rate limit
+
 @router.get("/me", response_model=UserResponse, dependencies=[Depends(RateLimiter(times=5, seconds=60))])
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
-# PUT /avatar
-@router.put("/avatar")
+
+@router.patch("/avatar")
 def upload_avatar(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
