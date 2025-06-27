@@ -56,5 +56,7 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
         return JSONResponse(content={"message": "Account already verified"})
 
     user.confirmed = True
+    db.add(user)
     db.commit()
     return JSONResponse(content={"message": "Email successfully verified"})
+

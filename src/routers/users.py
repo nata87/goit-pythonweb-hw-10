@@ -23,16 +23,12 @@ cloudinary.config(
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
-# PUT /avatar
-@router.put("/avatar")
-def upload_avatar(
-    file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    result = cloudinary.uploader.upload(file.file, folder="avatars")
-    url = result["secure_url"]
-    current_user.avatar_url = url
-    db.commit()
-    db.refresh(current_user)
-    return {"avatar_url": url}
+@router.put("/users/avatar")
+async def upload_avatar(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    # приклад простої логіки (можна замінити на збереження в базу/хмару)
+    filename = f"{current_user.email}_avatar.png"
+    contents = await file.read()
+    with open(f"avatars/{filename}", "wb") as f:
+        f.write(contents)
+
+    return {"message": "Avatar uploaded", "filename": filename}

@@ -11,7 +11,6 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
-    is_verified: bool | None = None
     avatar_url: str | None = None
 
     class Config:

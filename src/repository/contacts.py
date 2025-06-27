@@ -49,8 +49,4 @@ def get_upcoming_birthdays(db: Session, user_id: int):
         Contact.birthday.between(today, next_week)
     ).all()
 
-def confirm_email(email: str, db: Session) -> None:
-    user = db.query(User).filter(User.email == email).first()
-    if user:
-        user.is_verified = True
-        db.commit()
+
