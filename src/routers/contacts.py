@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from src.repository import contacts as crud
 from src.auth.dependencies import get_current_user
 from src.settings.config import get_db
-from src.database.models import User
+from src.database.models import Contact, User
 from src.schemas.contacts import ContactCreate, ContactUpdate, ContactResponse
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
@@ -21,9 +21,15 @@ def create_contact(contact: ContactCreate, db: Session = Depends(get_db), curren
 def get_contact(contact_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return crud.get_contact(db, contact_id, user_id=current_user.id)
 
-@router.put("/{contact_id}", response_model=ContactResponse)
-def update_contact(contact_id: int, contact: ContactUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return crud.update_contact(db, contact_id, contact, user_id=current_user.id)
+@router.put("/contacts/{contact_id}", response_model=ContactResponse)
+def update_contact(contact_id: int, db: Session = Depends(get_db)):
+    contact = db.query(Contact).filter(...).first()
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    ...
+    db.commit()
+    db.refresh(contact)
+    return contact 
 
 @router.delete("/{contact_id}")
 def delete_contact(contact_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

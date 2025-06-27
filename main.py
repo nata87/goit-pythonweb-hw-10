@@ -8,7 +8,7 @@ from src.routers.contacts import router as contacts_router
 from fastapi_limiter import FastAPILimiter
 import redis.asyncio as redis
 from src.routers.users import router as users_router
-
+from fastapi.openapi.utils import get_openapi
 
 models.Base.metadata.create_all(bind=engine, checkfirst=True)
 
@@ -52,3 +52,29 @@ def get_health_status(db=Depends(get_db)):
         return {"message": "API Nata is ready to work"}
     except Exception as e:
         raise HTTPException(status_code=503, detail="Database is not available")
+    
+    from fastapi.openapi.utils import get_openapi
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Contacts API HW10",
+        version="1.0.0",
+        description="API for managing contacts with JWT Auth",
+        routes=app.routes,
+    )
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+    for path in openapi_schema["paths"].values():
+        for method in path.values():
+            method["security"] = [{"BearerAuth": []}]
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
